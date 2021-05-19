@@ -8,26 +8,27 @@ const Covid = () => {
     const [selectState, setSelectState] = useState('')
 
     useEffect(() => {
+        const getCovidData = async () => {
+            try {
+                const res = await fetch('https://api.covid19india.org/data.json')
+                const newData = await res.json();
+                setData(newData.statewise[0])
+                if (selectState.length) {
+                    setData(newData.statewise.filter(i => i.state === selectState)[0])
+                } else {
+                    setStates([...new Set(newData.statewise.map((item) => item.state))])
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        }
         getCovidData();
     }, [selectState])
     const handleChange = (e) => {
         setSelectState(e.target.value)
     }
 
-    const getCovidData = async () => {
-        try {
-            const res = await fetch('https://api.covid19india.org/data.json')
-            const newData = await res.json();
-            setData(newData.statewise[0])
-            if (selectState.length) {
-                setData(newData.statewise.filter(i => i.state === selectState)[0])
-            } else {
-                setStates([...new Set(newData.statewise.map((item) => item.state))])
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    }
+
 
 
     return (
